@@ -8,7 +8,7 @@ class Action:
 
 
     def act(self):
-        self.__function(*self.__args)
+        return self.__function(*self.__args)
 
         
     def completed(self):

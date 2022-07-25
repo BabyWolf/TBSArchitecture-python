@@ -18,9 +18,15 @@ allow_next = False
 
 player = Actor((137, 541))
 
-for i in range(1, 11):
-    a = Action(lambda x: print(x*x), [i])
-    action_processor.add_action(a)
+def opers(a, b):
+    a1 = Action(lambda x, y: print(x+y), [a, b])
+    a2 = Action(lambda x, y: print(x-y), [a, b])
+    a3 = Action(lambda x, y: print(x/y), [a, b])
+    a4 = Action(lambda x, y: print(x*y), [a, b])
+
+    return ActionList(a1, a2, a3, a4)
+
+action_processor.add_action(Action(opers, [3463, 675]))
 
 font = pygame.font.Font("kenney-pixel.ttf", 32)
 
