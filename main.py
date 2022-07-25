@@ -6,6 +6,7 @@ import sys
 from action import *
 from actionProcessor import *
 from actor import *
+from redKiller import *
 
 pygame.init()
 
@@ -16,7 +17,9 @@ action_processor = ActionProcessor()
 hand_mode = True
 allow_next = False
 
-player = Actor((137, 541))
+player = SkittishGreen((137, 541))
+
+RedKiller((200, 200))
 
 def opers(a, b):
     a1 = Action(lambda x, y: print(x+y), [a, b])
@@ -43,7 +46,7 @@ while True:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                a = player.get_init_move_action(event.pos)
+                a = player.get_move_action(event.pos)
 
                 action_processor.add_action(a)
 
@@ -73,5 +76,8 @@ while True:
     
     Actor.group.update()
     Actor.group.draw(screen)
+
+    RedKiller.group.update()
+    RedKiller.group.draw(screen)
     
     pygame.display.flip()

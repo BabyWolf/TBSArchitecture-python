@@ -3,6 +3,8 @@ import pygame
 
 from action import *
 from trigger import *
+from actionList import *
+from redKiller import *
 
 class Actor(pygame.sprite.Sprite):
 
@@ -25,7 +27,17 @@ class Actor(pygame.sprite.Sprite):
         self.__move_start_point = pygame.math.Vector2(0, 0)
 
         self.__move_completed_trigger = Trigger()
+        
+        self.__deleted_trigger = Trigger()
+        self.__deleted_trigger.refresh() # изначально триггер поднят
 
+
+    def kill(self):
+      	# Этот метод от pygame.sprite.Sprite и он просто убирает объект из всех групп
+        super().kill()
+
+        self.__deleted_trigger.trigger()
+        
 
     def init_moving(self, to):
         self.__target = pygame.math.Vector2(to)
@@ -36,7 +48,7 @@ class Actor(pygame.sprite.Sprite):
 
 
     def get_init_move_action(self, to):
-        a1 = Action(self.init_moving, [to], self.__move_completed_trigger)
+        a1 = Action(self.init_moving, [to], self.__move_completed_trigger, self.__deleted_trigger)
 
         return a1
 
@@ -51,3 +63,27 @@ class Actor(pygame.sprite.Sprite):
             self.rect.center = self.__move_start_point.lerp(self.__target, self.__progress)
 
             self.__progress += 0.001
+
+class SkittishGreen(Actor):
+
+    def __init__(self, pos):
+        Actor.__init__(self, pos)
+
+
+    def check_collision(self):
+        for i in RedKiller.group.sprites():
+            if i.rect.colliderect(self.rect):
+                self.kill()
+                return
+
+
+    def get_move_action(self, to):
+        return Action(self.get_actions, [to])
+
+
+    def get_actions(self, to):
+        a1 = self.get_init_move_action(to)
+        a2 = Action(self.check_collision, [])
+        a3 = self.get_init_move_action(self.rect.center)
+
+        return ActionList(a1, a2, a3)

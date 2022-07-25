@@ -16,6 +16,11 @@ class ActionProcessor:
 
 
     def act_first(self):
+        self.clear_non_actual()
+      
+        if not self.has_actions_in_queue(): 
+            return
+        
         self.__current_action = self.__actions.pop(0)
 
         result = self.__current_action.act()
@@ -39,3 +44,14 @@ class ActionProcessor:
 
     def get_current_action(self):
         return self.__current_action
+
+    
+    def clear_non_actual(self):
+        i = 0
+        while i < len(self.__actions):
+            action = self.__actions[i]
+
+            if not action.actual():
+                self.__actions.pop(i)
+            else:
+                i += 1
